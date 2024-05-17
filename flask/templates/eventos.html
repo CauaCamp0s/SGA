@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Eventos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Eventos</h1>
+        <ul class="list-group">
+            {% for evento in eventos %}
+            <li class="list-group-item">
+                {{ evento.nome_evento }} - {{ evento.data_evento }}
+                <!-- Botão de editar -->
+                <a href="/editar_evento/{{ evento.evento_id }}" class="btn btn-primary btn-sm ml-2">Editar</a>
+                <!-- Botão de excluir -->
+                <a href="/excluir_evento/{{ evento.evento_id }}" class="btn btn-danger btn-sm ml-2">Excluir</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="btn btn-primary mt-3">Voltar para a Página Inicial</a>
+    </div>
+    <!-- Inclua o jQuery antes do Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

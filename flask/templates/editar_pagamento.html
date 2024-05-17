@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Pagamento</title>
+    <!-- Incluindo o Bootstrap CSS via CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Pagamento</h1>
+        <form method="POST">
+            <!-- Campos para editar os detalhes do pagamento -->
+            <div class="form-group">
+                <label for="data_pagamento">Data do Pagamento:</label>
+                <input type="date" class="form-control" id="data_pagamento" name="data_pagamento" value="{{ pagamento.data_pagamento }}">
+            </div>
+            <div class="form-group">
+                <label for="valor">Valor:</label>
+                <input type="text" class="form-control" id="valor" name="valor" value="{{ pagamento.valor }}">
+            </div>
+            <div class="form-group">
+                <label for="tipo_pagamento">Tipo de Pagamento:</label>
+                <input type="text" class="form-control" id="tipo_pagamento" name="tipo_pagamento" value="{{ pagamento.tipo_pagamento }}">
+            </div>
+            <!-- Botão para salvar as alterações -->
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </form>
+        <!-- Botão para cancelar e voltar à lista de pagamentos -->
+        <a href="/pagamentos" class="btn btn-secondary mt-3">Cancelar</a>
+    </div>
+    <!-- Incluindo o Bootstrap JS via CDN -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

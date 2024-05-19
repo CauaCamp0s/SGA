@@ -4,6 +4,8 @@
     <title>Pagamentos de Associado</title>
     <!-- Incluindo o Bootstrap CSS via CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Incluindo o Font Awesome CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -14,7 +16,7 @@
                     <th>Data Pagamento</th>
                     <th>Valor</th>
                     <th>Tipo Pagamento</th>
-                    <th>Ações</th> <!-- Nova coluna para os botões de editar e excluir -->
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,9 +27,9 @@
                     <td>{{ pagamento.tipo_pagamento }}</td>
                     <td>
                         <!-- Botão de editar -->
-                        <a href="/editar_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-primary btn-sm">Editar</a>
+                        <a href="/editar_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></a>
                         <!-- Botão de excluir -->
-                        <a href="/excluir_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-danger btn-sm">Excluir</a>
+                        <a href="/excluir_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
                 {% endfor %}

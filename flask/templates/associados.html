@@ -4,6 +4,8 @@
     <title>Lista de Associados</title>
     <!-- Incluindo o Bootstrap CSS via CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Incluindo o Font Awesome CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             padding: 20px;
@@ -36,8 +38,8 @@
                     <td>{{ associado.tipo_associado }}</td>
                     <td>{{ associado.data_inicio_associacao }}</td>
                     <td>{{ associado.data_fim_associacao }}</td>
-                    <td><a href="/editar/{{ associado.associado_id }}" class="btn btn-primary">Editar</a></td>
-                    <td><a href="/excluir/{{ associado.associado_id }}" class="btn btn-danger">Excluir</a></td>
+                    <td><a href="/editar/{{ associado.associado_id }}" class="btn btn-primary"><i class="fas fa-pen"></i></a></td>
+                    <td><a href="/excluir/{{ associado.associado_id }}" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

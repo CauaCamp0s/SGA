@@ -3,6 +3,8 @@
 <head>
     <title>Lista de Eventos</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Incluindo o Font Awesome CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -12,9 +14,9 @@
             <li class="list-group-item">
                 {{ evento.nome_evento }} - {{ evento.data_evento }}
                 <!-- Botão de editar -->
-                <a href="/editar_evento/{{ evento.evento_id }}" class="btn btn-primary btn-sm ml-2">Editar</a>
+                <a href="/editar_evento/{{ evento.evento_id }}" class="btn btn-primary btn-sm ml-2"><i class="fas fa-pen"></i></a>
                 <!-- Botão de excluir -->
-                <a href="/excluir_evento/{{ evento.evento_id }}" class="btn btn-danger btn-sm ml-2">Excluir</a>
+                <a href="/excluir_evento/{{ evento.evento_id }}" class="btn btn-danger btn-sm ml-2"><i class="fas fa-trash"></i></a>
             </li>
             {% endfor %}
         </ul>

@@ -116,7 +116,7 @@ def register():
         
         new_user = User(name=name, email=email, password=hashed_password)
         
-        try:
+        try:  
             db.session.add(new_user)
             db.session.commit()
             flash('Usuário registrado com sucesso! Faça o login agora.', 'success')

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Associado</title>
+    <!-- Incluindo o Bootstrap CSS via CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Associado</h1>
+        <form id="editarAssociadoForm" method="POST" action="/editar/{{ associado.associado_id }}">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ associado.nome }}">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ associado.email }}">
+            </div>
+            <div class="form-group">
+                <label for="tipo_associado">Tipo de Associado:</label>
+                <input type="text" class="form-control" id="tipo_associado" name="tipo_associado" value="{{ associado.tipo_associado }}">
+            </div>
+            <div class="form-group">
+                <label for="data_inicio">Data de Início:</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ associado.data_inicio_associacao }}">
+            </div>
+            <div class="form-group">
+                <label for="data_fim">Data de Fim:</label>
+                <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ associado.data_fim_associacao }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+        <!-- Botão para voltar para a página de associados -->
+        <a href="/associados" class="btn btn-secondary mt-3">Voltar para a Lista de Associados</a>
+    </div>
+    <!-- Incluindo o jQuery e o Bootstrap JS via CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Função para redirecionar para a lista de associados após a edição ser concluída
+        function redirectToAssociados() {
+            window.location.href = "/associados";
+        }
+
+        // Capturar o evento de envio do formulário
+        $('#editarAssociadoForm').submit(function (event) {
+            // Prevenir o comportamento padrão do formulário
+            event.preventDefault();
+            // Realizar o envio do formulário via AJAX
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'), // Usar a URL especificada no atributo action do formulário
+                data: $(this).serialize(), // Serializar os dados do formulário
+                success: function (response) {
+                    // Redirecionar para a lista de associados após a edição ser concluída
+                    redirectToAssociados();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

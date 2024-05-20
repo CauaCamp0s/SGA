@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pagamentos de Associado</title>
+    <!-- Incluindo o Bootstrap CSS via CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Incluindo o Font Awesome CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Pagamentos de Associado</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Data Pagamento</th>
+                    <th>Valor</th>
+                    <th>Tipo Pagamento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pagamento in pagamentos %}
+                <tr>
+                    <td>{{ pagamento.data_pagamento }}</td>
+                    <td>{{ pagamento.valor }}</td>
+                    <td>{{ pagamento.tipo_pagamento }}</td>
+                    <td>
+                        <!-- Botão de editar -->
+                        <a href="/editar_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></a>
+                        <!-- Botão de excluir -->
+                        <a href="/excluir_pagamento/{{ pagamento.pagamento_id }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Botão para cadastrar novo pagamento -->
+        <a href="/cadastro_pagamento" class="btn btn-success">Cadastrar Novo Pagamento</a>
+
+        <!-- Botão para voltar à página inicial -->
+        <a href="/index" class="btn btn-primary">Voltar para a Página Inicial</a>
+    </div>
+
+    <!-- Incluindo o Bootstrap JS via CDN -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

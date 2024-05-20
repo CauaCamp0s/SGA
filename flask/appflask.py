@@ -1,23 +1,33 @@
-from flask import Flask, jsonify, request, abort, render_template
-from flask import redirect
+from flask import Flask, jsonify, request, abort, render_template, flash, redirect, url_for, session
 import mysql.connector
 import logging
 from flask import send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 
 # Create the Flask app instance
 app = Flask(__name__)
-
+app.secret_key = 'Caua120400!'
 # Set the logging level after app instance creation
 app.logger.setLevel(logging.DEBUG)
+app.config['SECRET_KEY'] = 'Caua120400!'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:140610@localhost/associacao'
+db = SQLAlchemy(app)
 
-# Remaining code for your Flask application
+
+password_hash = generate_password_hash('Caua120400!')
+
+senha_correta = check_password_hash(password_hash, 'Caua120400!')
+
 
 # Função utilitária para conectar e desconectar do banco de dados
 def connect_to_database():
     return mysql.connector.connect(
         host="localhost",
-        user="caua",
+        # user="caua",
+        user="root",
         password="140610",
         database="associacao"
     )
@@ -50,9 +60,76 @@ def execute_query(sql, values=None, commit=False):
             db_connection.close()
         raise error
 
-# Rota principal para renderizar a página inicial
-@app.route('/')
+ # Rota principal para renderizar a página inicial
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
+
+
+# Definição da classe User
+class User(db.Model):
+    __tablename__ = 'users'
+
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
+
+    # Método opcional para representação mais amigável do objeto
+    def __repr__(self):
+        return f"User(user_id={self.user_id}, name={self.name}, email={self.email})"
+class User(db.Model):
+    __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
+
+    user_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+
+
+
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password, password):
+            session['user_id'] = user.user_id
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Login ou senha incorretos.', 'danger')
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+        
+        new_user = User(name=name, email=email, password=hashed_password)
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Usuário registrado com sucesso! Faça o login agora.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash(f'Erro: {str(e)}', 'danger')
+    
+    return render_template('register.html')
+
+@app.route('/index')
 def index():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     return render_template('index.html')
 
 # Rota para renderizar a página de associados
@@ -317,7 +394,7 @@ def add_pagamento():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'sga.ico', mimetype='image/vnd.microsoft.icon')
+    return '', 404
 
 # Create the Flask app instance
 
@@ -483,6 +560,7 @@ def excluir_pagamento(id):
     
     
 
-
 if __name__ == '__main__':
+    with app.app_context():
+        db.session.remove()  # Certifique-se de estar dentro do contexto da aplicação Flask
     app.run(debug=True)

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1>Excluir Autor</h1>
+    <p>Tem certeza que deseja excluir o autor "{{ autor.nome }}"?</p>
+    <form method="POST" action="{{ url_for('excluir_autor_web', autor_id=autor.id) }}" onsubmit="return confirm('Tem certeza que deseja excluir este autor?');">
+      <button type="submit" class="btn btn-danger">Excluir</button>
+      <a href="{{ url_for('listar_autores') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}

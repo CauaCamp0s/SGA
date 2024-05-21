@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Atualizar Livro</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.titulo.label(class="form-label") }}
+      {{ form.titulo(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.autor_id.label(class="form-label") }}
+      {{ form.autor_id(class="form-select") }}
+    </div>
+    <div class="mb-3">
+      {{ form.ano_publicacao.label(class="form-label") }}
+      {{ form.ano_publicacao(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.genero.label(class="form-label") }}
+      {{ form.genero(class="form-control") }}
+    </div>
+    <div class="mb-3 form-check">
+      {{ form.disponivel(class="form-check-input") }}
+      {{ form.disponivel.label(class="form-check-label") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+  </form>
+{% endblock %}

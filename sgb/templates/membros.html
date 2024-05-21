@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Membros</h1>
+  <a href="{{ url_for('adicionar_membro_form') }}" class="btn btn-primary mb-3">Adicionar Membro</a>
+  <ul class="list-group">
+    {% for membro in membros %}
+      <li class="list-group-item">{{ membro.nome }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

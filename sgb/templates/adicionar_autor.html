@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1>Adicionar Autor</h1>
+    <form method="POST" action="{{ url_for('adicionar_autor') }}">
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" class="form-control" id="nome" name="nome" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{{ url_for('listar_autores') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}

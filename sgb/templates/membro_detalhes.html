@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Detalhes do Membro</h1>
+  <p><strong>Nome:</strong> {{ membro.nome }}</p>
+  <p><strong>Email:</strong> {{ membro.email }}</p>
+  <p><strong>Telefone:</strong> {{ membro.telefone }}</p>
+  <a href="{{ url_for('atualizar_membro', membro_id=membro.id) }}" class="btn btn-primary">Atualizar</a>
+  <form method="post" action="{{ url_for('excluir_membro', membro_id=membro.id) }}" style="display: inline;">
+    <button type="submit" class="btn btn-danger">Excluir</button>
+  </form>
+{% endblock %}

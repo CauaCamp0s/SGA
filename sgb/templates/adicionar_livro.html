@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Adicionar Livro</h1>
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.titulo.label(class="form-label") }}
+      {{ form.titulo(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      <label for="autor_id" class="form-label">Autor</label>
+      <select name="autor_id" id="autor_id" class="form-select">
+        {% for autor_id, autor_nome in form.autor_id.choices %}
+          <option value="{{ autor_id }}">{{ autor_nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      {{ form.ano_publicacao.label(class="form-label") }}
+      {{ form.ano_publicacao(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.genero.label(class="form-label") }}
+      {{ form.genero(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      <label for="foto" class="form-label">Foto do Livro</label>
+      <input type="file" name="foto" id="foto" class="form-control">
+    </div>
+    <div class="mb-3 form-check">
+      {{ form.disponivel(class="form-check-input") }}
+      {{ form.disponivel.label(class="form-check-label") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+  </form>
+{% endblock %}

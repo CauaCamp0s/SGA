@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Empréstimos</h1>
+  <a href="{{ url_for('adicionar_emprestimo') }}" class="btn btn-primary mb-3">Adicionar Empréstimo</a>
+  <ul class="list-group">
+    {% for emprestimo in emprestimos %}
+      <li class="list-group-item">{{ emprestimo.livro.titulo }} ({{ emprestimo.membro.nome }}) - {{ emprestimo.data_emprestimo.strftime('%Y-%m-%d') }} - {% if emprestimo.data_devolucao %}{{ emprestimo.data_devolucao.strftime('%Y-%m-%d') }}{% else %}Pendente{% endif %}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

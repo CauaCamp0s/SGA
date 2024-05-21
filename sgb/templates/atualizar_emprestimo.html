@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Atualizar Empréstimo</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.livro_id.label(class="form-label") }}
+      {{ form.livro_id(class="form-select") }}
+    </div>
+    <div class="mb-3">
+      {{ form.membro_id.label(class="form-label") }}
+      {{ form.membro_id(class="form-select") }}
+    </div>
+    <div class="mb-3">
+      {{ form.data_emprestimo.label(class="form-label") }}
+      {{ form.data_emprestimo(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.data_devolucao.label(class="form-label") }}
+      {{ form.data_devolucao(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+  </form>
+{% endblock %}

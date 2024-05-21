@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="mt-3">Detalhes do Autor</h1>
+  <p><strong>Nome:</strong> {{ autor.nome }}</p>
+  <a href="{{ url_for('atualizar_autor', autor_id=autor.id) }}" class="btn btn-primary">Atualizar</a>
+  <form method="post" action="{{ url_for('excluir_autor', autor_id=autor.id) }}" style="display: inline;">
+    <button type="submit" class="btn btn-danger">Excluir</button>
+  </form>
+{% endblock %}

@@ -31,6 +31,7 @@ def connect_to_database():
         database="associacao"
     )
 
+
 # Função utilitária para executar consultas SQL
 def execute_query(sql, values=None, commit=False):
     try:

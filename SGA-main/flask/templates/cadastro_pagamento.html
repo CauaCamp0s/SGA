@@ -12,8 +12,10 @@
         <!-- Formulário de Cadastro de Pagamento -->
         <form id="formPagamento">
             <div class="form-group">
-                <label for="associado_id">ID do Associado:</label>
-                <input type="text" class="form-control" id="associado_id" name="associado_id" required>
+                <label for="associado_id">Associado:</label>
+                <select class="form-control" id="associado_id" name="associado_id" required>
+                    <option value="">Selecione um associado</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="data_pagamento">Data do Pagamento:</label>
@@ -39,6 +41,23 @@
     <!-- Script para submeter o formulário via AJAX -->
     <script>
         $(document).ready(function() {
+            // Buscar a lista de associados e preencher o dropdown
+            $.ajax({
+                type: 'GET',
+                url: '/api/associados',
+                success: function(response) {
+                    var associados = response;
+                    var dropdown = $('#associado_id');
+                    associados.forEach(function(associado) {
+                        dropdown.append('<option value="' + associado.associado_id + '">' + associado.nome + '</option>');
+                    });
+                },
+                error: function(error) {
+                    console.error('Erro ao buscar associados:', error);
+                    alert('Erro ao buscar associados. Verifique o console para mais detalhes.');
+                }
+            });
+
             // Submeter formulário para adicionar novo pagamento
             $('#formPagamento').submit(function(e) {
                 e.preventDefault();

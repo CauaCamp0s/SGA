@@ -13,6 +13,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>Associado</th>
                     <th>Data Pagamento</th>
                     <th>Valor</th>
                     <th>Tipo Pagamento</th>
@@ -22,6 +23,7 @@
             <tbody>
                 {% for pagamento in pagamentos %}
                 <tr>
+                    <td>{{ pagamento.nome_associado }}</td>
                     <td>{{ pagamento.data_pagamento }}</td>
                     <td>{{ pagamento.valor }}</td>
                     <td>{{ pagamento.tipo_pagamento }}</td>

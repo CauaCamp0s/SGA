@@ -9,11 +9,10 @@ import os
 
 # Create the Flask app instance
 app = Flask(__name__)
-app.secret_key = 'Caua120400!'
-# Set the logging level after app instance creation
 app.logger.setLevel(logging.DEBUG)
 app.config['SECRET_KEY'] = 'Caua120400!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:140610@localhost/associacao'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
@@ -89,8 +88,6 @@ class User(db.Model):
     password = db.Column(db.String(100))
 
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -116,7 +113,7 @@ def register():
         
         new_user = User(name=name, email=email, password=hashed_password)
         
-        try:
+        try:  
             db.session.add(new_user)
             db.session.commit()
             flash('Usuário registrado com sucesso! Faça o login agora.', 'success')
@@ -148,76 +145,174 @@ def associados():
 @app.route('/eventos')
 def eventos():
     try:
-        sql = "SELECT * FROM Eventos"
-        eventos = execute_query(sql)  # Supondo que execute_query retorna uma lista de eventos
-        return render_template('eventos.html', eventos=eventos)
-    except mysql.connector.Error as error:
-        return jsonify({"error": str(error)}), 500
+        # Consulta SQL para obter todos os eventos e os nomes dos associados
+        sql = """
+            SELECT eventos.*, associados.nome AS nome_associado
+            FROM Eventos eventos
+            JOIN Associados associados ON eventos.associado_id = associados.associado_id
+        """
+        # Execute a consulta SQL
+        result = execute_query(sql)
 
-# Rota para renderizar a página de lista de eventos
-@app.route('/lista_eventos')
+        # Converta o resultado da consulta em uma lista de dicionários para jsonify
+        eventos = []
+        for row in result:
+            evento = {
+                'evento_id': row['evento_id'],
+                'nome_evento': row['nome_evento'],
+                'data_evento': row['data_evento'],
+                'descricao': row['descricao'],
+                'localizacao': row['localizacao'],
+                'associado_id': row['associado_id'],
+                'nome_associado': row['nome_associado']
+            }
+            eventos.append(evento)
+
+        # Retorne os eventos como JSON
+        return render_template('eventos.html', eventos=eventos, associados=associados)
+        return jsonify(eventos), 200
+    except Exception as e:
+        # Em caso de erro, retorne uma mensagem de erro
+        return jsonify({'error': str(e)}), 500
+
+class Associado(db.Model):
+    __tablename__ = 'Associados'
+    associado_id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    endereco = db.Column(db.String(255))
+    email = db.Column(db.String(255), nullable=False)
+    telefone = db.Column(db.String(20))
+    tipo_associado = db.Column(db.String(50))
+    data_inicio_associacao = db.Column(db.Date)
+    data_fim_associacao = db.Column(db.Date)
+
+class Evento(db.Model):
+    __tablename__ = 'Eventos'
+    evento_id = db.Column(db.Integer, primary_key=True)
+    nome_evento = db.Column(db.String(255), nullable=False)
+    data_evento = db.Column(db.Date)
+    descricao = db.Column(db.Text)
+    localizacao = db.Column(db.String(255))
+    associado_id = db.Column(db.Integer, db.ForeignKey('Associados.associado_id'), nullable=False)
+    associado = db.relationship('Associado', backref=db.backref('eventos', lazy=True))
+
+
+@app.route('/lista_eventos', methods=['GET', 'POST'])
 def lista_eventos():
-    return render_template('lista_eventos.html')
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            required_fields = ['nome_evento', 'data_evento', 'descricao', 'localizacao', 'associado_id']
+            for field in required_fields:
+                if field not in data:
+                    raise KeyError(f"Campo obrigatório ausente: {field}")
+
+            novo_evento = Evento(
+                nome_evento=data['nome_evento'],
+                data_evento=data['data_evento'],
+                descricao=data['descricao'],
+                localizacao=data['localizacao'],
+                associado_id=data['associado_id']
+            )
+            db.session.add(novo_evento)
+            db.session.commit()
+
+            return jsonify({"message": "Evento inserido com sucesso!"}), 201
+        except (KeyError, Exception) as error:
+            db.session.rollback()
+            return jsonify({"error": str(error)}), 400
+    else:
+        try:
+            eventos = Evento.query.all()
+            associados = Associado.query.all()
+            return render_template('lista_eventos.html', eventos=eventos, associados=associados)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
 
 # Rota para obter todos os eventos
 @app.route('/api/eventos', methods=['GET'])
-def listar_eventos():
+def get_all_eventos():
     try:
-        sql = "SELECT * FROM Eventos"
+        # Consulta SQL para obter todos os eventos e os nomes dos associados
+        sql = """
+            SELECT eventos.*, associados.nome AS nome_associado
+            FROM Eventos eventos
+            JOIN Associados associados ON eventos.associado_id = associados.associado_id
+        """
+        # Execute a consulta SQL
         result = execute_query(sql)
-        return jsonify(result), 200
-    except mysql.connector.Error as error:
-        return jsonify({"error": str(error)}), 500
 
+        # Converta o resultado da consulta em uma lista de dicionários para jsonify
+        eventos = []
+        for row in result:
+            evento = {
+                'evento_id': row['evento_id'],
+                'nome_evento': row['nome_evento'],
+                'data_evento': row['data_evento'],
+                'descricao': row['descricao'],
+                'localizacao': row['localizacao'],
+                'associado_id': row['associado_id'],
+                'nome_associado': row['nome_associado']
+            }
+            eventos.append(evento)
 
-# Rota para inserir um novo evento
-@app.route('/api/eventos', methods=['POST'])
-def inserir_evento():
-    try:
-        data = request.get_json()
-        required_fields = ['nome_evento', 'data_evento', 'descricao', 'localizacao']
-        for field in required_fields:
-            if field not in data:
-                raise KeyError(f"Campo obrigatório ausente: {field}")
-
-        sql = "INSERT INTO Eventos (nome_evento, data_evento, descricao, localizacao) VALUES (%s, %s, %s, %s)"
-        values = (data['nome_evento'], data['data_evento'], data['descricao'], data['localizacao'])
-        execute_query(sql, values, commit=True)
-
-        return jsonify({"message": "Evento inserido com sucesso!"}), 201
-    except (KeyError, mysql.connector.Error) as error:
-        return jsonify({"error": str(error)}), 400
-
-
-# Rota para adicionar um novo evento
-@app.route('/adicionar_evento', methods=['POST'])
-def adicionar_evento():
-    try:
-        nome_evento = request.form.get('nome_evento')
-        data_evento = request.form.get('data_evento')
-        descricao = request.form.get('descricao')
-        localizacao = request.form.get('localizacao')
-
-        if not nome_evento or not data_evento or not descricao or not localizacao:
-            raise ValueError("Todos os campos são obrigatórios.")
-
-        sql = "INSERT INTO Eventos (nome_evento, data_evento, descricao, localizacao) VALUES (%s, %s, %s, %s)"
-        values = (nome_evento, data_evento, descricao, localizacao)
-        execute_query(sql, values, commit=True)
-
-        return redirect(url_for('eventos'))
+        # Retorne os eventos como JSON
+        return jsonify(eventos), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Em caso de erro, retorne uma mensagem de erro
+        return jsonify({'error': str(e)}), 500
+        
 
-# Rota para renderizar a página de pagamentos
+# @app.route('/api/eventos', methods=['POST'])
+# def inserir_evento():
+#     try:
+#         data = request.get_json()
+#         required_fields = ['nome_evento', 'data_evento', 'descricao', 'localizacao', 'associado_id']
+#         for field in required_fields:
+#             if field not in data:
+#                 raise KeyError(f"Campo obrigatório ausente: {field}")
+
+#         sql = "INSERT INTO Eventos (nome_evento, data_evento, descricao, localizacao, associado_id) VALUES (%s, %s, %s, %s, %s)"
+#         values = (data['nome_evento'], data['data_evento'], data['descricao'], data['localizacao'], data['associado_id'])
+#         execute_query(sql, values, commit=True)
+
+#         return jsonify({"message": "Evento inserido com sucesso!"}), 201
+#     except (KeyError, mysql.connector.Error) as error:
+#         return jsonify({"error": str(error)}), 400
+
+
+
 @app.route('/pagamentos')
 def pagamentos():
     try:
-        sql = "SELECT * FROM Pagamentos"
-        pagamentos = execute_query(sql)  # Supondo que execute_query retorna uma lista de pagamentos
+        # Consulta SQL para obter todos os pagamentos com os nomes dos associados
+        sql = """
+            SELECT pagamentos.*, associados.nome AS nome_associado
+            FROM Pagamentos pagamentos
+            JOIN Associados associados ON pagamentos.associado_id = associados.associado_id
+        """
+        # Execute a consulta SQL
+        result = execute_query(sql)
+
+        # Converta o resultado da consulta em uma lista de dicionários para passar ao template
+        pagamentos = []
+        for row in result:
+            pagamento = {
+                'pagamento_id': row['pagamento_id'],
+                'data_pagamento': row['data_pagamento'],
+                'valor': row['valor'],
+                'tipo_pagamento': row['tipo_pagamento'],
+                'nome_associado': row['nome_associado']
+            }
+            pagamentos.append(pagamento)
+
+        # Renderize a página com a lista de pagamentos
         return render_template('pagamentos.html', pagamentos=pagamentos)
-    except mysql.connector.Error as error:
-        return jsonify({"error": str(error)}), 500
+    except Exception as e:
+        # Em caso de erro, retorne uma mensagem de erro
+        return jsonify({'error': str(e)}), 500
+
 
 # Rota para renderizar a página de cadastro de pagamento
 @app.route('/cadastro_pagamento')
@@ -323,33 +418,6 @@ def delete_associado(associado_id):
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
-# Rota para obter todos os eventos
-@app.route('/api/eventos', methods=['GET'])
-def get_eventos():
-    try:
-        sql = "SELECT * FROM Eventos"
-        result = execute_query(sql)
-        return jsonify(result), 200
-    except mysql.connector.Error as error:
-        return jsonify({"error": str(error)}), 500
-
-# Rota para inserir um novo evento
-@app.route('/api/eventos', methods=['POST'])
-def add_evento():
-    try:
-        data = request.get_json()
-        required_fields = ['nome_evento', 'data_evento', 'descricao', 'localizacao']
-        for field in required_fields:
-            if field not in data:
-                raise KeyError(f"Campo obrigatório ausente: {field}")
-
-        sql = "INSERT INTO Eventos (nome_evento, data_evento, descricao, localizacao) VALUES (%s, %s, %s, %s)"
-        values = (data['nome_evento'], data['data_evento'], data['descricao'], data['localizacao'])
-        execute_query(sql, values, commit=True)
-
-        return jsonify({"message": "Evento inserido com sucesso!"}), 201
-    except (KeyError, mysql.connector.Error) as error:
-        return jsonify({"error": str(error)}), 400
 
 # Rota para obter pagamentos de um associado pelo ID do associado
 @app.route('/api/pagamentos/associado/<int:associado_id>', methods=['GET'])

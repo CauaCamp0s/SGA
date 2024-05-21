@@ -55,6 +55,7 @@ CREATE TABLE Users (
 );
 
 
+ALTER TABLE Eventos ADD CONSTRAINT fk_associado_id FOREIGN KEY (associado_id) REFERENCES Associados(associado_id);
 
 GRANT ALL PRIVILEGES ON associacao.* TO 'root'@'localhost';
 
